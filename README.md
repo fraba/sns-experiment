@@ -1,4 +1,5 @@
 HumHub - Social Network Kit
+- branch for sns-experiment
 ===========================
 
 [![Build Status](https://travis-ci.org/humhub/humhub.svg?branch=master)](https://travis-ci.org/humhub/humhub)
