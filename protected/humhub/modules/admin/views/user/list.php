@@ -1,5 +1,4 @@
 <?php
-
 use humhub\modules\admin\grid\UserActionColumn;
 use humhub\modules\admin\models\UserSearch;
 use humhub\modules\admin\widgets\ExportButton;
