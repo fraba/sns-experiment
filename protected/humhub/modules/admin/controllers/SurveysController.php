@@ -120,15 +120,7 @@ class SurveysController extends Controller
                      }
                      
                      fclose($handle);
-                     @unlink(Yii::getAlias('@webroot')."/".$model->csv_file);
-                    
-                    
-    // $basePath = Yii::getAlias('@webroot');
-
-
-
-        //@unlink("$basePath/{$model->csv_file}");
-                    
+                     @unlink(Yii::getAlias('@webroot')."/".$model->csv_file);               
                     
                     echo "<div class='alert alert-success'>Data uploaded successfully.</div>";
                 }
