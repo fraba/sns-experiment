@@ -1,11 +1,6 @@
 <?php
 namespace humhub\modules\user\models;
-
 use humhub\components\ActiveRecord;
-//use humhub\modules\admin\notifications\IncludeGroupNotification;
-
-//use humhub\modules\directory\widgets\GroupUsers;
-//use humhub\modules\space\models\Space;
 use humhub\modules\user\components\ActiveQueryUser;
 use Yii;
 
@@ -29,26 +24,6 @@ class Surveys extends ActiveRecord
             [['user_email'], 'string', 'max' => 255],
         ];
     }
-
-/* 
-    id
-user_id
-user_email
-
-pol_op
-pol_op_abo
-pol_op_imm
-pol_op_gay
-pol_op_eco
-int_abo_sur
-int_gay_sur
-int_eco_sur
-int_imm_sur
-int_abo_obs
-int_gay_obs
-int_eco_obs
-int_imm_obs
-*/
 
     /**
      * @inheritdoc

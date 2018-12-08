@@ -1,5 +1,4 @@
 <?php
-
 namespace humhub\modules\user\widgets;
 
 /**
@@ -20,5 +19,4 @@ class UserTags extends \yii\base\Widget
     }
 
 }
-
 ?>

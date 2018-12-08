@@ -13,27 +13,9 @@ public function rules(){
             [['csv_file'],'file','extensions'=>'csv','maxSize'=>1024 * 1024 * 5],
         ];
     }
-   
     public function attributeLabels(){
         return [
             'csv_file'=>'CSV file',
         ];
-    }
-    
-    
-    
-    
-    
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
+    }    
 }
