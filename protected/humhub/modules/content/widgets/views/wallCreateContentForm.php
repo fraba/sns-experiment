@@ -35,32 +35,7 @@ $this->registerJsConfig('content.form', [
 ]]);
 
 $pickerUrl = ($contentContainer instanceof Space) ? $contentContainer->createUrl('/space/membership/search') : null;
-
-
-
-
-
-
-///////////////////////////
-
-$this->registerCssFile("https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css");
-
 ?>
-
-
-
-
-<style>
-.switch-toggle {
-  width: 10em;
-}
-
-.switch-toggle label:not(.disabled) {
-  cursor: pointer;
-}
-</style>
-
-<!--<link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet" />-->
 
 <div class="panel panel-default clearfix">
     <div class="panel-body" id="contentFormBody" style="display:none;" data-action-component="content.form.CreateForm" >
@@ -116,10 +91,6 @@ $this->registerCssFile("https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle
 
                     <span class="label label-info label-public hidden"><?= Yii::t('ContentModule.widgets_views_contentForm', 'Public'); ?></span>
                     <span class="label label-info label-polop1" id="pol-op"></span>
-                    
-                    
-                    
-
 
                     <ul class="nav nav-pills preferences" style="right: 0; top: 5px;">
                         <li class="dropdown">
@@ -132,79 +103,21 @@ $this->registerCssFile("https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle
                                  <li>
                                      <?= Link::withAction(Yii::t('ContentModule.base', 'Topics'), 'setTopics')->icon(Yii::$app->getModule('topic')->icon) ?>
                                 </li>
-                                <?php if ($canSwitchVisibility): ?>
+                                <?php if($canSwitchVisibility): ?>
                                     <li>
                                         <?= Link::withAction(Yii::t('ContentModule.widgets_views_contentForm', 'Make public'), 'changeVisibility')
                                             ->id('contentForm_visibility_entry')->icon('fa-unlock') ?>
                                     </li>
-                                <?php endif; ?>
-                                
-                                <?php /*if ($canSwitchVisibility): ?>
-                                    <li>
-                                        <?= Link::withAction('Pol Op', 'changePolop')->id('contentForm_polop_entry')->icon('fa-unlock') ?>
-                                    </li>
-                                <?php  endif; */ ?>
-                            
- <script>
- function filterme(value) {
-  value = parseInt(value, 10); // Convert to an integer
-  if (value === 1) {
-    $('#polop').removeClass('rangeAll', 'rangePassive').addClass('rangeActive');
-    $('#pol-op').text('Left');
-  /*} else if (value === 2) {
-    $('#polop').removeClass('rangeActive', 'rangePassive').addClass('rangeAll');
-    $('#pol-op').text('');*/
-  } else if (value === 3) {
-    $('#polop').removeClass('rangeAll', 'rangeActive').addClass('rangePassive');
-    $('#pol-op').text('Right');
-  }
-}
-
-/*
-	
-	CreateForm.prototype.changePolop = function() {
-        if(!$('#contentForm_polop').prop('checked')) {
-            this.setPolopLeft();
-        } else {
-            this.setPolopRight();
-        }
-    };
-	
-	CreateForm.prototype.setDefaultPolop = function() {
-       // if(module.config['defaultPolop']) {
-        //    this.setPolopLeft();
-       // } else {
-            this.setPolopRight();
-       // }
-    };
-
-    CreateForm.prototype.setPolopLeft = function() {
-        $('#contentForm_polop').prop("checked", true);
-        $('#contentForm_polop_entry').html('<i class="fa fa-lock"></i>' + module.text(['makeLeft']));
-        $('.label-polop').removeClass('hidden');
-    };
-
-    CreateForm.prototype.setPolopRight = function() {
-        $('#contentForm_polop').prop("checked", false);
-        $('#contentForm_polop_entry').html('<i class="fa fa-unlock"></i>' + module.text(['makeRight']));
-        $('.label-polop').addClass('hidden');
-    };
-	
-*/
-
-
- </script>                      <li>
-                                    <div style="padding: 4px 15px; color: white; font-size: 13px !important; font-weight: 600 !important; clear: both; display: block;">
-                                    <i class="fa fa-angle-left" aria-hidden="true"></i>
-                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
-                                    Bias:
-                                    <!--<input type="range" style="float: right; width: 60%;" id="polop" name="polop" onchange="filterme(this.value);" min="1" class="rangeAll" max="3" value="2">-->
-                                    <input type="range" style="float: right; width: 60%;" id="polop" name="polop" onchange="filterme(this.value);" min="1" class="rangeAll" max="3" value="2">
-                                    
-                                    </div>                                
-                                </li>
-                                
-
+                                <?php endif;                                 
+                                                                  
+     if(Yii::$app->user->isAdmin()) { ?>
+     <li>
+        <div style="padding: 4px 15px; color: white; font-size: 13px !important; font-weight: 600 !important; clear: both; display: block;">
+        <i class="fa fa-angle-left" aria-hidden="true"></i><i class="fa fa-angle-right" aria-hidden="true"></i> Bias:
+        <input type="range" style="float: right; width: 60%;" id="polop" name="polop" onchange="filterme(this.value);" min="1" class="rangeAll" max="3" value="2">
+        </div>                                
+    </li>                              
+    <?php }?>
                                 
                             </ul>
                         </li>
@@ -221,3 +134,19 @@ $this->registerCssFile("https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle
     </div>
     <!-- /panel body -->
 </div> <!-- /panel -->
+
+ <script>
+     function filterme(value) {
+      value = parseInt(value, 10); // Convert to an integer
+      if (value === 1) {
+        $('#polop').removeClass('rangeAll', 'rangePassive').addClass('rangeActive');
+        $('#pol-op').text('Left');
+      /*} else if (value === 2) {
+        $('#polop').removeClass('rangeActive', 'rangePassive').addClass('rangeAll');
+        $('#pol-op').text('');*/
+      } else if (value === 3) {
+        $('#polop').removeClass('rangeAll', 'rangeActive').addClass('rangePassive');
+        $('#pol-op').text('Right');
+      }
+    }
+ </script>   
