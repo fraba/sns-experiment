@@ -117,12 +117,15 @@ class WallCreateContentForm extends Widget
     public static function create(ContentActiveRecord $record, ContentContainerActiveRecord $contentContainer = null)
     {
         Yii::$app->response->format = 'json';
-
+        
         $visibility = Yii::$app->request->post('visibility', Content::VISIBILITY_PRIVATE);
+        $polop = Yii::$app->request->post('polop');
+             
         if ($visibility == Content::VISIBILITY_PUBLIC && !$contentContainer->can(CreatePublicContent::class)) {
             $visibility = Content::VISIBILITY_PRIVATE;
         }
-
+        
+        $record->content->pol_op = $polop;
         $record->content->visibility = $visibility;
         $record->content->container = $contentContainer;
 

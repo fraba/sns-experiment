@@ -38,6 +38,7 @@ use yii\helpers\Url;
  * @property string $object_model
  * @property integer $object_id
  * @property integer $visibility
+ * @property string $pol_op
  * @property integer $pinned
  * @property string $archived
  * @property string $created_at
@@ -121,7 +122,7 @@ class Content extends ContentDeprecated implements Movable, ContentOwner
     public function rules()
     {
         return [
-            [['object_id', 'visibility', 'pinned'], 'integer'],
+            [['object_id', 'visibility', 'pol_op', 'pinned'], 'integer'],
             [['archived'], 'safe'],
             [['guid'], 'string', 'max' => 45],
             [['object_model'], 'string', 'max' => 100],
@@ -204,6 +205,7 @@ class Content extends ContentDeprecated implements Movable, ContentOwner
                 'originator' => $this->user->guid,
                 'contentContainerId' => $this->container->contentContainerRecord->id,
                 'visibility' => $this->visibility,
+                'pol_op' => $this->pol_op,
                 'sourceClass' => $contentSource->className(),
                 'sourceId' => $contentSource->getPrimaryKey(),
                 'silent' => $this->isMuted(),
@@ -292,6 +294,43 @@ class Content extends ContentDeprecated implements Movable, ContentOwner
     {
         return $this->visibility == self::VISIBILITY_PRIVATE;
     }
+    
+    
+   /////////////////////////////////////////////////// 
+        /**
+     * Returns the pol_op of the content object
+     *
+     * @return Integer
+     */
+    public function getPolop()
+    {
+        return $this->pol_op;
+    }
+
+    /**
+     * Checks if the content visiblity is set to public.
+     *
+     * @return boolean
+     */
+    public function isLeft()
+    {
+        return $this->pol_op == 1;
+    }
+
+    /**
+     * Checks if the content visiblity is set to private.
+     *
+     * @return boolean
+     */
+    public function isRight()
+    {
+        return $this->pol_op == 3;
+    }
+    
+    
+    
+    
+   ///////////////////////////////////////////////////
 
     /**
      * Checks if the content object is pinned

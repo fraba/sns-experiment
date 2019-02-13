@@ -29,6 +29,8 @@ humhub.module('content.form', function(module, require, $) {
         $('#contentFormError').hide();
 
         this.setDefaultVisibility();
+		this.setDefaultPolop(); //
+		
         this.$.fadeIn('fast');
 
         if(!module.config['disabled']) {
@@ -81,11 +83,14 @@ humhub.module('content.form', function(module, require, $) {
 
         this.resetSettingInputs();
         this.setDefaultVisibility();
+		this.setDefaultPolop(); 
         this.resetFilePreview();
         this.resetFileUpload();
 
         $('#public').attr('checked', false);
         $('#contentFormBody').find('.humhub-ui-richtext').trigger('clear');
+		
+		//$('#polop').attr('checked', false);
     };
 
     CreateForm.prototype.resetSettingInputs = function() {
@@ -152,6 +157,44 @@ humhub.module('content.form', function(module, require, $) {
         $('#contentForm_visibility_entry').html('<i class="fa fa-unlock"></i>' + module.text(['makePublic']));
         $('.label-public').addClass('hidden');
     };
+	
+	
+	//////////////////////////
+	//CreateForm.prototype.getForm = function() {
+    //   return this.$.find('form:polop');
+    //};
+/*	
+	CreateForm.prototype.changePolop = function() {
+        if(!$('#contentForm_polop').prop('checked')) {
+            this.setPolopLeft();
+        } else {
+            this.setPolopRight();
+        }
+    };
+	
+	CreateForm.prototype.setDefaultPolop = function() {
+       // if(module.config['defaultPolop']) {
+        //    this.setPolopLeft();
+       // } else {
+            this.setPolopRight();
+       // }
+    };
+
+    CreateForm.prototype.setPolopLeft = function() {
+        $('#contentForm_polop').prop("checked", true);
+        $('#contentForm_polop_entry').html('<i class="fa fa-lock"></i>' + module.text(['makeLeft']));
+        $('.label-polop').removeClass('hidden');
+    };
+
+    CreateForm.prototype.setPolopRight = function() {
+        $('#contentForm_polop').prop("checked", false);
+        $('#contentForm_polop_entry').html('<i class="fa fa-unlock"></i>' + module.text(['makeRight']));
+        $('.label-polop').addClass('hidden');
+    };
+	
+*/	
+	/////////////////////////	
+
 
     CreateForm.prototype.notifyUser = function() {
         $('#notifyUserContainer').show();
