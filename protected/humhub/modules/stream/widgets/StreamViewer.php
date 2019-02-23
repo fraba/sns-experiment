@@ -150,9 +150,9 @@ class StreamViewer extends JsWidget
      */
     protected function getStreamUrl()
     {
-        if ($this->contentContainer) {
+        if($this->contentContainer){
             return $this->contentContainer->createUrl($this->streamAction, $this->streamActionParams);
-        } else {
+        }else{
             $params = $this->streamActionParams;
             array_unshift($params, $this->streamAction);
             return Url::to($params);
@@ -165,7 +165,7 @@ class StreamViewer extends JsWidget
      */
     public function run()
     {
-        if (empty($this->streamAction)) {
+        if(empty($this->streamAction)){
             throw new InvalidConfigException('You need to set the streamAction attribute to use this widget!');
         }
 

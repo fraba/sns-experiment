@@ -24,13 +24,10 @@ ContentFormAsset::register($this);
 
 $this->registerJsConfig('content.form', [
     'defaultVisibility' => $defaultVisibility,
-    'defaultPolop' => '', // $defaultVisibility,
     'disabled' => ($contentContainer instanceof Space && $contentContainer->isArchived()),
     'text' => [
         'makePrivate' => Yii::t('ContentModule.widgets_views_contentForm', 'Make private'),
         'makePublic' => Yii::t('ContentModule.widgets_views_contentForm', 'Make public'),
-        'makeLeft' => 'Left',
-        'makeRight' => 'Right',
         'info.archived' => Yii::t('ContentModule.widgets_views_contentForm', 'This space is archived.')
 ]]);
 
@@ -110,14 +107,14 @@ $pickerUrl = ($contentContainer instanceof Space) ? $contentContainer->createUrl
                                     </li>
                                 <?php endif;                                 
                                                                   
-     if(Yii::$app->user->isAdmin()) { ?>
-     <li>
-        <div style="padding: 4px 15px; color: white; font-size: 13px !important; font-weight: 600 !important; clear: both; display: block;">
-        <i class="fa fa-angle-left" aria-hidden="true"></i><i class="fa fa-angle-right" aria-hidden="true"></i> Bias:
-        <input type="range" style="float: right; width: 60%;" id="polop" name="polop" onchange="filterme(this.value);" min="1" class="rangeAll" max="3" value="2">
-        </div>                                
-    </li>                              
-    <?php }?>
+                                 if(Yii::$app->user->isAdmin()){ ?>
+                                 <li>
+                                    <div style="padding: 4px 15px; color: white; font-size: 13px !important; font-weight: 600 !important; clear: both; display: block;">
+                                    <i class="fa fa-angle-left" aria-hidden="true"></i><i class="fa fa-angle-right" aria-hidden="true"></i> Bias:
+                                    <input type="range" style="float: right; width: 60%;" id="polop" name="polop" onchange="filterme(this.value);" min="1" class="rangeAll" max="3" value="2">
+                                    </div>                                
+                                </li>                              
+                                <?php } ?>
                                 
                             </ul>
                         </li>

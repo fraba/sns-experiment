@@ -41,6 +41,10 @@ use humhub\modules\ui\filter\widgets\FilterNavigation;
  * - visibility
  *   - filter_visibility_public
  *   - filter_visibility_private
+ * - polop
+ *   - filter_polop_right
+ *   - filter_polop_left
+ *   - filter_polop_neutral 
  * - sorting
  *   - sorting_c
  *   - sorting_u
@@ -69,6 +73,7 @@ class WallStreamFilterNavigation extends FilterNavigation
     const FILTER_BLOCK_BASIC = 'basic';
     const FILTER_BLOCK_VISIBILITY = 'visibility';
     const FILTER_BLOCK_SORTING = 'sorting';
+    const FILTER_BLOCK_POLOP = 'polop';
     const FILTER_BLOCK_CONTENT_TYPE = 'contentType';
     const FILTER_BLOCK_TOPIC = 'topics';
     const FILTER_BLOCK_ORIGINATORS = 'originators';
@@ -80,6 +85,10 @@ class WallStreamFilterNavigation extends FilterNavigation
     const FILTER_VISIBILITY_PUBLIC = 'visibility_public';
     const FILTER_VISIBILITY_PRIVATE = 'visibility_private';
     const FILTER_ARCHIVED = 'entry_archived';
+    
+    const FILTER_POLOP_RIGHT = "polop_right";
+    const FILTER_POLOP_LEFT = "polop_left";
+    const FILTER_POLOP_NEUTRAL = "polop_neutral";
 
     const FILTER_CONTENT_TYPE = 'content_type';
     const FILTER_TOPICS = 'topic';
@@ -131,6 +140,11 @@ class WallStreamFilterNavigation extends FilterNavigation
             'title' => Yii::t('StreamModule.filter', 'Sorting'),
             'sortOrder' => 100
         ], static::PANEL_POSITION_CENTER);
+        
+         $this->addFilterBlock(static::FILTER_BLOCK_POLOP, [
+            'title' => Yii::t('StreamModule.filter', 'Bias'),
+            'sortOrder' => 200
+        ], static::PANEL_POSITION_CENTER);
 
         $this->addFilterBlock(static::FILTER_BLOCK_CONTENT_TYPE, [
             'title' => Yii::t('StreamModule.filter', 'Content Type'),
@@ -159,6 +173,7 @@ class WallStreamFilterNavigation extends FilterNavigation
        $this->initTopicFilter();
        $this->initContentTypeFilter();
        $this->initOriginatorFilter();
+       if(Yii::$app->user->isAdmin()){$this->initPolopFilters();}
     }
 
     protected function initBasicFilters()
@@ -180,6 +195,36 @@ class WallStreamFilterNavigation extends FilterNavigation
             'title' => Yii::t('ContentModule.widgets_views_stream', 'With file attachments'),
             'sortOrder' => 300
         ], static::FILTER_BLOCK_BASIC);
+    }
+    
+    protected function initPolopFilters()
+    {   
+        $this->addFilter([
+            'id' => static::FILTER_POLOP_LEFT,
+            'class' => RadioFilterInput::class,
+            'radioGroup' => 'polop',
+            'multiple' => true,
+            'title' => Yii::t('ContentModule.widgets_views_stream', 'Left'),
+            'sortOrder' => 100
+        ], static::FILTER_BLOCK_POLOP);
+
+        $this->addFilter([
+            'id' => static::FILTER_POLOP_RIGHT,
+            'class' => RadioFilterInput::class,
+            'radioGroup' => 'polop',
+            'multiple' => true,
+            'title' => Yii::t('ContentModule.widgets_views_stream', 'Right'),
+            'sortOrder' => 200
+        ], static::FILTER_BLOCK_POLOP);
+        
+        $this->addFilter([
+            'id' => static::FILTER_POLOP_NEUTRAL,
+            'class' => RadioFilterInput::class,
+            'radioGroup' => 'polop',
+            'multiple' => true,
+            'title' => Yii::t('ContentModule.widgets_views_stream', 'Others'),
+            'sortOrder' => 200
+        ], static::FILTER_BLOCK_POLOP);  
     }
 
     protected function initVisibilityFilters()
