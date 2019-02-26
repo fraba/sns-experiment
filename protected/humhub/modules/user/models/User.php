@@ -131,8 +131,8 @@ class User extends ContentContainerActiveRecord implements IdentityInterface, Se
 
         return [
             [['username'], 'required'],
-            [['status', 'created_by', 'updated_by', 'visibility'], 'integer'],
-            [['status', 'visibility'], 'integer'],
+            [['status', 'pol_op', 'created_by', 'updated_by', 'visibility'], 'integer'],
+            [['status', 'pol_op', 'visibility'], 'integer'],
             [['tags'], 'string'],
             [['guid'], 'string', 'max' => 45],
             [['username'], 'string', 'max' => $userModule->maximumUsernameLength, 'min' => $userModule->minimumUsernameLength],
@@ -197,7 +197,7 @@ class User extends ContentContainerActiveRecord implements IdentityInterface, Se
     {
         $scenarios = parent::scenarios();
         $scenarios['login'] = ['username', 'password'];
-        $scenarios['editAdmin'] = ['username', 'email', 'status'];
+        $scenarios['editAdmin'] = ['username', 'email', 'status', 'pol_op'];
         $scenarios['registration_email'] = ['username', 'email'];
         $scenarios['registration'] = ['username'];
 
@@ -213,6 +213,7 @@ class User extends ContentContainerActiveRecord implements IdentityInterface, Se
             'id' => 'ID',
             'guid' => 'Guid',
             'status' => Yii::t('UserModule.models_User', 'Status'),
+            'pol_op' => Yii::t('UserModule.models_User', 'Bias'),
             'username' => Yii::t('UserModule.models_User', 'Username'),
             'email' => Yii::t('UserModule.models_User', 'Email'),
             'profile.firstname' => Yii::t('UserModule.models_Profile', 'First name'),
