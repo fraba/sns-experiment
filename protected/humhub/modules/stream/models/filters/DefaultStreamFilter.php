@@ -89,14 +89,21 @@ class DefaultStreamFilter extends StreamQueryFilter
             $this->filterPublic();
         }
         
-        // Polop filters //        
+        // Polop filters for Administrator//        
         if($this->isFilterActive(self::FILTER_LEFT)){
             $this->filterPolop(1);
         }elseif($this->isFilterActive(self::FILTER_RIGHT)){
             $this->filterPolop(3);
         }elseif($this->isFilterActive(self::FILTER_NEUTRAL)){
             $this->filterPolop(2);
-        }               
+        }    
+        
+        //Filtering posts for the users with bias//        
+        if(!Yii::$app->user->isAdmin()){
+            $pol_op = Yii::$app->user->identity->pol_op;
+            if($pol_op<>2){$this->filterPolop($pol_op);}
+        }
+                   
     }
 
     public function isFilterActive($filter)
