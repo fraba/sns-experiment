@@ -1,0 +1,10 @@
+    1. git clone the project from our clients git account.
+    2. create uploads/csv folder
+    3. change ownership of everything to www-data
+    4. create db
+    5. install composer locally to the project folder
+    6. run composer install
+    7. point browser to URL and follow instructions for setting up db connection
+    8. automatic process fails at point of creating an admin account
+    9. edit db_04_12_2018.sql queue table creation section by changing the varchar to 128
+    10. apply db_04_12_2018.sql to the db
