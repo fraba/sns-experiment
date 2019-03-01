@@ -1,4 +1,4 @@
-    1. git clone the project from our clients git account.
+    1. git clone the project.
     2. create uploads/csv folder
     3. change ownership of everything to www-data
     4. create db
