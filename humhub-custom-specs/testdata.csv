@@ -1,0 +1,4 @@
+email,pol_op,pol_op_abo,pol_op_imm,pol_op_gay,pol_op_eco,int_abo_sur,int_gay_sur,int_eco_sur,int_imm_sur,int_abo_obs,int_gay_obs,int_eco_obs,int_imm_obs
+somebody@somemail.com,1,1,2,2,3,3,5,5,4,1,2,3,4
+another@somemail.com,1,1,2,2,3,3,5,5,4,4,3,2,1
+andathird@somemail.com,1,1,2,2,3,3,5,5,4,1,2,3,4
