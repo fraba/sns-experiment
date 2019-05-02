@@ -148,6 +148,19 @@ class UserController extends Controller
                 ],
             ];
         }
+        
+        
+        if(Yii::$app->user->isAdmin() || !$user->isSystemAdmin()) {
+            $definition['elements']['User']['elements']['pol_op'] = [
+                'type' => 'dropdownlist',
+                'class' => 'form-control',
+                'items' => [
+                    2 => '- Select -',
+                    1 => 'Left',
+                    3 => 'Right',
+                ],
+            ];
+        }
 
         // Add Profile Form
         $definition['elements']['Profile'] = array_merge(['type' => 'form'], $profile->getFormDefinition());
@@ -175,6 +188,8 @@ class UserController extends Controller
         $form = new HForm($definition);
         $form->models['User'] = $user;
         $form->models['Profile'] = $profile;
+        
+       
 
         if ($form->submitted('save') && $form->validate()) {
             if ($form->save()) {
@@ -279,6 +294,32 @@ class UserController extends Controller
         $this->checkGroupAccess($user);
 
         $user->status = User::STATUS_DISABLED;
+        $user->save();
+
+        return $this->redirect(['list']);
+    }
+    
+    public function actionLeft($id)
+    {
+        $this->forcePostRequest();
+
+        $user = User::findOne(['id' => $id]);
+        if($user === null){throw new HttpException(404);}
+
+        $user->pol_op = 1;
+        $user->save();
+
+        return $this->redirect(['list']);
+    }
+
+    public function actionRight($id)
+    {
+        $this->forcePostRequest();
+
+        $user = User::findOne(['id' => $id]);
+        if($user === null){throw new HttpException(404);}
+
+        $user->pol_op = 3;
         $user->save();
 
         return $this->redirect(['list']);

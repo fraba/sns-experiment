@@ -66,7 +66,7 @@ class SpaceController extends ContentContainerController
      * @throws \yii\base\InvalidConfigException
      */
     public function actionIndex()
-    {
+    {       
         $space = $this->getSpace();
 
         if (Yii::$app->request->get('tour') || Yii::$app->request->get('contentId')) {

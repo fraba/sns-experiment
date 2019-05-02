@@ -23,6 +23,9 @@ class DefaultStreamFilter extends StreamQueryFilter
     const FILTER_INVOLVED = "entry_userinvolved";
     const FILTER_PRIVATE = "visibility_private";
     const FILTER_PUBLIC = "visibility_public";
+    const FILTER_RIGHT = "polop_right";
+    const FILTER_LEFT = "polop_left";
+    const FILTER_NEUTRAL = "polop_neutral";
 
     /**
      * Array of stream filters to apply to the query.
@@ -33,7 +36,10 @@ class DefaultStreamFilter extends StreamQueryFilter
      *  - 'entry_userinvovled': Filter content the query $user is involved
      *  - 'visibility_private': Filter only private content
      *  - 'visibility_public': Filter only public content
-     *
+     *  - 'polop_right': Filter only content with Right political opinion (pol_op)
+     *  - 'polop_left': Filter only content with Left political opinion (pol_op)
+     *  - 'polop_neutral': Filter only content with not selected political opinion (pol_op)
+     *      *
      * @var array
      */
     public $filters = [];
@@ -71,17 +77,33 @@ class DefaultStreamFilter extends StreamQueryFilter
             $this->filterMine();
         }
 
-        // Show only items where the current user is invovled
+        // Show only items where the current user is involved
         if ($this->isFilterActive(self::FILTER_INVOLVED)) {
             $this->filterInvolved();
         }
 
         // Visibility filters
-        if ($this->isFilterActive(self::FILTER_PRIVATE)) {
+        if($this->isFilterActive(self::FILTER_PRIVATE)){
             $this->filterPrivate();
-        } elseif ($this->isFilterActive(self::FILTER_PUBLIC)) {
+        }elseif($this->isFilterActive(self::FILTER_PUBLIC)){
             $this->filterPublic();
         }
+        
+        // Polop filters for Administrator//        
+        if($this->isFilterActive(self::FILTER_LEFT)){
+            $this->filterPolop(1);
+        }elseif($this->isFilterActive(self::FILTER_RIGHT)){
+            $this->filterPolop(3);
+        }elseif($this->isFilterActive(self::FILTER_NEUTRAL)){
+            $this->filterPolop(2);
+        }    
+        
+        //Filtering posts for the users with bias//        
+        if(!Yii::$app->user->isAdmin()){
+            $pol_op = Yii::$app->user->identity->pol_op;
+            if($pol_op<>2){$this->filterPolop($pol_op);}
+        }
+                   
     }
 
     public function isFilterActive($filter)
@@ -136,4 +158,10 @@ class DefaultStreamFilter extends StreamQueryFilter
         $this->query->andWhere(['content.visibility' => Content::VISIBILITY_PRIVATE]);
         return $this;
     }
+    
+    protected function filterPolop($polop)
+    {
+        $this->query->andWhere(['content.pol_op' => $polop]);
+        return $this;
+    } 
 }

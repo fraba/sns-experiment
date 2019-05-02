@@ -62,7 +62,7 @@ use yii\widgets\ActiveForm;
                     'value' => function ($data) {
                         return ($data->last_login == null) ? Yii::t('AdminModule.user', 'never') : Yii::$app->formatter->asDate($data->last_login);
                     }
-                ],
+                ],     
                 ['class' => UserActionColumn::class],
             ],
         ]); ?>

@@ -27,7 +27,6 @@ class UserActionColumn extends ActionColumn
     protected function renderDataCellContent($model, $key, $index)
     {
         /** @var User $model */
-
         $actions = [];
         if ($model->status == User::STATUS_SOFT_DELETED) {
             $actions[Yii::t('AdminModule.user', 'Permanently delete')] = ['delete'];
@@ -44,8 +43,16 @@ class UserActionColumn extends ActionColumn
                 if (!$model->isCurrentUser()) {
                     $actions[Yii::t('base', 'Delete')] = ['delete'];
                 }
+                $actions[] = '---';
+                if ($model->pol_op == 3) {
+                    $actions[Yii::t('AdminModule.user', 'Left')] = ['left', 'linkOptions' => ['data-method' => 'post']];
+                } elseif ($model->pol_op == 1) {
+                    $actions[Yii::t('AdminModule.user', 'Right')] = ['right', 'linkOptions' => ['data-method' => 'post']];
+                }else{
+                    $actions[Yii::t('AdminModule.user', 'Left')] = ['left', 'linkOptions' => ['data-method' => 'post']];
+                    $actions[Yii::t('AdminModule.user', 'Right')] = ['right', 'linkOptions' => ['data-method' => 'post']];
+                }
             }
-
 
             if ($model->status == User::STATUS_ENABLED) {
                 $actions[] = '---';

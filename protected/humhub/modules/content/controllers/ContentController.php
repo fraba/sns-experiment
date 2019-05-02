@@ -203,6 +203,42 @@ class ContentController extends Controller
                     'state' => $content->visibility
         ]);
     }
+    
+    
+    ////////////////////////////////////////////////////////    
+        /**
+     * Switches the content pol_op for the given content.
+     * 
+     * @param type $id content id
+     * @return \yii\web\Response
+     * @throws HttpException
+     */
+    public function actionTogglePolop($id)
+    {
+        $this->forcePostRequest();
+        $content = Content::findOne(['id' => $id]);
+
+        if (!$content) {
+            throw new HttpException(400, Yii::t('ContentController.base', 'Invalid content id given!'));
+        } elseif (!$content->canEdit()) {
+            throw new HttpException(403);
+        } // elseif ($content->isPrivate() && !$content->container->permissionManager->can(new CreatePublicContent())) {
+          //  throw new HttpException(403);
+        //}
+
+        if ($content->isLeft()) {
+            $content->pol_op = 'left';
+        } else {
+            $content->pol_op = 'right';
+        }
+
+        return $this->asJson([
+                    'success' => $content->save(),
+                    'state' => $content->pol_op
+        ]);
+    }
+    
+    /////////////////////////////////////////////////////////
 
     /**
      * Pins an wall entry & corresponding content object.

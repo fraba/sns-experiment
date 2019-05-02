@@ -28,6 +28,8 @@ abstract class LiveEvent extends \yii\base\BaseObject
      * @var int
      */
     public $visibility;
+    
+    public $pol_op;
 
     /**
      * Returns the data of this event as array
@@ -38,12 +40,14 @@ abstract class LiveEvent extends \yii\base\BaseObject
     {
         $data = get_object_vars($this);
         unset($data['visibility']);
+        unset($data['pol_op']);
         unset($data['contentContainerId']);
 
         return [
             'type' => str_replace('\\', '.', $this->className()),
             'contentContainerId' => $this->contentContainerId,
             'visibility' => $this->visibility,
+            'pol_op' =>$this->pol_op,
             'data' => $data
         ];
     }

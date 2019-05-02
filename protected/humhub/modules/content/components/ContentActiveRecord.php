@@ -241,9 +241,18 @@ class ContentActiveRecord extends ActiveRecord implements ContentOwner, Movable
         if ($this->content->isPublic()) {
             $labels[] = Label::info(Yii::t('ContentModule.widgets_views_label', 'Public'))->icon('fa-globe')->sortOrder(300);
         }
-
+		
         if ($includeContentName) {
             $labels[] = Label::defaultType($this->getContentName())->icon($this->getIcon())->sortOrder(400);
+        }
+        
+        if(Yii::$app->user->isAdmin()) {
+    		if ($this->content->isRight()) {
+                $labels[] = Label::info(Yii::t('ContentModule.widgets_views_label', 'Right'))->icon('fa-angle-right')->sortOrder(500);
+            }
+    		if ($this->content->isLeft()) {
+                $labels[] = Label::info(Yii::t('ContentModule.widgets_views_label', 'Left'))->icon('fa-angle-left')->sortOrder(500);
+            }
         }
 
         foreach (Topic::findByContent($this->content)->all() as $topic) {

@@ -1,0 +1,12 @@
+For this version of humhub to run with the new features, the following changes need to be made to the database.
+
+Add the survey table per the survey_table.sql
+
+Change the engine of the table _user_surveys into InnoDB using the following query:
+“ALTER TABLE _user_surveys ENGINE=InnoDB;”
+
+Add new field pol_op  in content table for posts using the following query: 
+“ALTER TABLE content ADD COLUMN pol_op TINYINT(4) NULL DEFAULT '2' AFTER visibility;”
+
+Add new field pol_op in users table using the query:
+"ALTER TABLE user ADD COLUMN pol_op TINYINT(4) NULL DEFAULT '2' AFTER status;"

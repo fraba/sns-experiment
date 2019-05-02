@@ -32,7 +32,6 @@ $this->registerJsConfig('content.form', [
 ]]);
 
 $pickerUrl = ($contentContainer instanceof Space) ? $contentContainer->createUrl('/space/membership/search') : null;
-
 ?>
 
 <div class="panel panel-default clearfix">
@@ -83,11 +82,12 @@ $pickerUrl = ($contentContainer instanceof Space) ? $contentContainer->createUrl
 
                 <!-- public checkbox -->
                 <?= Html::checkbox("visibility", "", ['id' => 'contentForm_visibility', 'class' => 'contentForm hidden', 'aria-hidden' => 'true', 'title' => Yii::t('ContentModule.widgets_views_contentForm', 'Content visibility') ]); ?>
-
+                <?= Html::checkbox("polop", "", ['id' => 'contentForm_polop', 'class' => 'contentForm hidden', 'aria-hidden' => 'true', 'title' => 'Pol Op' ]); ?>
                 <!-- content sharing -->
                 <div class="pull-right">
 
                     <span class="label label-info label-public hidden"><?= Yii::t('ContentModule.widgets_views_contentForm', 'Public'); ?></span>
+                    <span class="label label-info label-polop1" id="pol-op"></span>
 
                     <ul class="nav nav-pills preferences" style="right: 0; top: 5px;">
                         <li class="dropdown">
@@ -100,12 +100,22 @@ $pickerUrl = ($contentContainer instanceof Space) ? $contentContainer->createUrl
                                  <li>
                                      <?= Link::withAction(Yii::t('ContentModule.base', 'Topics'), 'setTopics')->icon(Yii::$app->getModule('topic')->icon) ?>
                                 </li>
-                                <?php if ($canSwitchVisibility): ?>
+                                <?php if($canSwitchVisibility): ?>
                                     <li>
                                         <?= Link::withAction(Yii::t('ContentModule.widgets_views_contentForm', 'Make public'), 'changeVisibility')
                                             ->id('contentForm_visibility_entry')->icon('fa-unlock') ?>
                                     </li>
-                                <?php endif; ?>
+                                <?php endif;                                 
+                                                                  
+                                 if(Yii::$app->user->isAdmin()){ ?>
+                                 <li>
+                                    <div style="padding: 4px 15px; color: white; font-size: 13px !important; font-weight: 600 !important; clear: both; display: block;">
+                                    <i class="fa fa-angle-left" aria-hidden="true"></i><i class="fa fa-angle-right" aria-hidden="true"></i> Bias:
+                                    <input type="range" style="float: right; width: 60%;" id="polop" name="polop" onchange="filterme(this.value);" min="1" class="rangeAll" max="3" value="2">
+                                    </div>                                
+                                </li>                              
+                                <?php } ?>
+                                
                             </ul>
                         </li>
                     </ul>
@@ -121,3 +131,19 @@ $pickerUrl = ($contentContainer instanceof Space) ? $contentContainer->createUrl
     </div>
     <!-- /panel body -->
 </div> <!-- /panel -->
+
+ <script>
+     function filterme(value) {
+      value = parseInt(value, 10); // Convert to an integer
+      if (value === 1) {
+        $('#polop').removeClass('rangeAll', 'rangePassive').addClass('rangeActive');
+        $('#pol-op').text('Left');
+      /*} else if (value === 2) {
+        $('#polop').removeClass('rangeActive', 'rangePassive').addClass('rangeAll');
+        $('#pol-op').text('');*/
+      } else if (value === 3) {
+        $('#polop').removeClass('rangeAll', 'rangeActive').addClass('rangePassive');
+        $('#pol-op').text('Right');
+      }
+    }
+ </script>   

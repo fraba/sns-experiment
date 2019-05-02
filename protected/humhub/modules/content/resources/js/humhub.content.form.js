@@ -29,6 +29,7 @@ humhub.module('content.form', function(module, require, $) {
         $('#contentFormError').hide();
 
         this.setDefaultVisibility();
+		
         this.$.fadeIn('fast');
 
         if(!module.config['disabled']) {
@@ -80,7 +81,7 @@ humhub.module('content.form', function(module, require, $) {
         $contentForm.attr('checked', false);
 
         this.resetSettingInputs();
-        this.setDefaultVisibility();
+        this.setDefaultVisibility(); 
         this.resetFilePreview();
         this.resetFileUpload();
 
@@ -152,7 +153,7 @@ humhub.module('content.form', function(module, require, $) {
         $('#contentForm_visibility_entry').html('<i class="fa fa-unlock"></i>' + module.text(['makePublic']));
         $('.label-public').addClass('hidden');
     };
-
+	
     CreateForm.prototype.notifyUser = function() {
         $('#notifyUserContainer').show();
         Widget.instance('#notifyUserInput').focus();

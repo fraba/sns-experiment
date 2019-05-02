@@ -36,7 +36,7 @@ use yii\helpers\Url;
                         </a>
 
                         <ul class="dropdown-menu pull-right">
-                            <?= WallEntryControls::widget(['object' => $object, 'wallEntryWidget' => $wallEntryWidget]); ?>
+                            <?=  WallEntryControls::widget(['object' => $object, 'wallEntryWidget' => $wallEntryWidget]); ?>
                         </ul>
                     </li>
                 </ul>
