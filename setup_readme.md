@@ -42,7 +42,7 @@ quit
 sudo su
 sudo curl -s https://getcomposer.org/installer | php ## i did not test this step because composer is already installed on my server
 
-sudo -u www-data composer install
+sudo -u www-data composer install # This can generate errors if php modules are not installed
 mkdir assets
 sudo chown -R www-data:www-data *
 
@@ -89,3 +89,7 @@ This completes the install and allows you to sign in as admin.
 SUCCESS!
 
 <<<<<<< End Instructions >>>>>>>
+
+
+RewriteCond %{HTTP_HOST} ^partake.social
+RewriteRule ^(.*) http://203.101.226.107/sns-experiment/$1 [P]

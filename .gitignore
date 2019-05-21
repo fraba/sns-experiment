@@ -39,3 +39,6 @@ favicon.ico
 
 **/tests/codeception/_output/**
 /assets
+
+network_setup_details.md
+
