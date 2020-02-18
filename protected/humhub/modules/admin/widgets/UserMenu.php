@@ -96,6 +96,17 @@ class UserMenu extends BaseMenu
             )
         ]);
 
+        $this->addItem([
+            'label' => Yii::t('AdminModule.user', 'Experiments'),
+            'url' => Url::to(['/admin/experiments']),
+            'sortOrder' => 700,
+            'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'admin' && Yii::$app->controller->id == 'experiments'),
+            'isVisible' => Yii::$app->user->can(
+                   new ManageUsers(),
+                   new ManageGroups()
+            )
+        ]);
+
         parent::init();
     }
 

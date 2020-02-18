@@ -11,7 +11,7 @@ use humhub\modules\admin\notifications\ExcludeGroupNotification;
 use humhub\modules\admin\permissions\ManageGroups;
 use humhub\modules\user\models\forms\EditGroupForm;
 use humhub\modules\user\models\Surveys;
-//use humhub\modules\user\models\Group;
+use humhub\modules\user\models\Group;
 use humhub\modules\user\models\GroupUser;
 use humhub\modules\user\models\User;
 use humhub\modules\user\models\UserPicker;
@@ -38,7 +38,7 @@ class SurveysController extends Controller
     public function init()
     {
         $this->subLayout = '@admin/views/layouts/user';
-       // $this->appendPageTitle(Yii::t('AdminModule.base', 'Groups'));
+        // $this->appendPageTitle(Yii::t('AdminModule.base', 'Groups'));
 
         return parent::init();
     }
@@ -66,67 +66,67 @@ class SurveysController extends Controller
             'searchModel' => $searchModel,
         ]);
     }
-    
-    
+
+
     public function actionCsvimport()
     {
         $model = new CsvForm();
-        if($model->load(Yii::$app->request->post())){
+        if ($model->load(Yii::$app->request->post())) {
             $model->csv_file = UploadedFile::getInstance($model, 'csv_file');
-            if($model->csv_file /*&& $model->validate()*/){
-                    $time = time();
-                    $model->csv_file->saveAs('uploads/csv/' .$time. '.' . $model->csv_file->extension);
-                    $model->csv_file = 'uploads/csv/' .$time. '.' . $model->csv_file->extension;
+            if ($model->csv_file /*&& $model->validate()*/) {
+                $time = time();
+                $model->csv_file->saveAs('uploads/csv/' . $time . '.' . $model->csv_file->extension);
+                $model->csv_file = 'uploads/csv/' . $time . '.' . $model->csv_file->extension;
 
-                     $handle = fopen($model->csv_file, "r");
-                     while(($fileop = fgetcsv($handle, 1000, ",")) !== false){
-                        
-                        $SurveyModel =  Surveys::find()->where(['user_email'=>$fileop[0]])->one();
-     
-                        if($SurveyModel===null){
-                            $NewSurveyModel = new Surveys();
-                            $NewSurveyModel->user_email = $fileop[0];
-                            $NewSurveyModel->pol_op = $fileop[1];
-                            $NewSurveyModel->pol_op_abo = $fileop[2];
-                            $NewSurveyModel->pol_op_imm = $fileop[3];
-                            $NewSurveyModel->pol_op_gay = $fileop[4];
-                            $NewSurveyModel->pol_op_eco = $fileop[5];
-                            $NewSurveyModel->int_abo_sur = $fileop[6];
-                            $NewSurveyModel->int_gay_sur = $fileop[7];
-                            $NewSurveyModel->int_eco_sur = $fileop[8];
-                            $NewSurveyModel->int_imm_sur = $fileop[9];
-                            $NewSurveyModel->int_abo_obs = $fileop[10];
-                            $NewSurveyModel->int_gay_obs = $fileop[11];
-                            $NewSurveyModel->int_eco_obs = $fileop[12];
-                            $NewSurveyModel->int_imm_obs = $fileop[13];
-                            $NewSurveyModel->save();
-                        }else{                     
-                            //$SurveyModel->user_email = $fileop[0];
-                            $SurveyModel->pol_op = $fileop[1];
-                            $SurveyModel->pol_op_abo = $fileop[2];
-                            $SurveyModel->pol_op_imm = $fileop[3];
-                            $SurveyModel->pol_op_gay = $fileop[4];
-                            $SurveyModel->pol_op_eco = $fileop[5];
-                            $SurveyModel->int_abo_sur = $fileop[6];
-                            $SurveyModel->int_gay_sur = $fileop[7];
-                            $SurveyModel->int_eco_sur = $fileop[8];
-                            $SurveyModel->int_imm_sur = $fileop[9];
-                            $SurveyModel->int_abo_obs = $fileop[10];
-                            $SurveyModel->int_gay_obs = $fileop[11];
-                            $SurveyModel->int_eco_obs = $fileop[12];
-                            $SurveyModel->int_imm_obs = $fileop[13];
-                            $SurveyModel->save();
-                        }
-                     }
-                     
-                     fclose($handle);
-                     @unlink(Yii::getAlias('@webroot')."/".$model->csv_file);               
-                    
-                    echo "<div class='alert alert-success'>Data uploaded successfully.</div>";
+                $handle = fopen($model->csv_file, "r");
+                while (($fileop = fgetcsv($handle, 1000, ",")) !== false) {
+
+                    $SurveyModel =  Surveys::find()->where(['user_email' => $fileop[0]])->one();
+
+                    if ($SurveyModel === null) {
+                        $NewSurveyModel = new Surveys();
+                        $NewSurveyModel->user_email = $fileop[0];
+                        $NewSurveyModel->pol_op = $fileop[1];
+                        $NewSurveyModel->pol_op_abo = $fileop[2];
+                        $NewSurveyModel->pol_op_imm = $fileop[3];
+                        $NewSurveyModel->pol_op_gay = $fileop[4];
+                        $NewSurveyModel->pol_op_eco = $fileop[5];
+                        $NewSurveyModel->int_abo_sur = $fileop[6];
+                        $NewSurveyModel->int_gay_sur = $fileop[7];
+                        $NewSurveyModel->int_eco_sur = $fileop[8];
+                        $NewSurveyModel->int_imm_sur = $fileop[9];
+                        $NewSurveyModel->int_abo_obs = $fileop[10];
+                        $NewSurveyModel->int_gay_obs = $fileop[11];
+                        $NewSurveyModel->int_eco_obs = $fileop[12];
+                        $NewSurveyModel->int_imm_obs = $fileop[13];
+                        $NewSurveyModel->save();
+                    } else {
+                        //$SurveyModel->user_email = $fileop[0];
+                        $SurveyModel->pol_op = $fileop[1];
+                        $SurveyModel->pol_op_abo = $fileop[2];
+                        $SurveyModel->pol_op_imm = $fileop[3];
+                        $SurveyModel->pol_op_gay = $fileop[4];
+                        $SurveyModel->pol_op_eco = $fileop[5];
+                        $SurveyModel->int_abo_sur = $fileop[6];
+                        $SurveyModel->int_gay_sur = $fileop[7];
+                        $SurveyModel->int_eco_sur = $fileop[8];
+                        $SurveyModel->int_imm_sur = $fileop[9];
+                        $SurveyModel->int_abo_obs = $fileop[10];
+                        $SurveyModel->int_gay_obs = $fileop[11];
+                        $SurveyModel->int_eco_obs = $fileop[12];
+                        $SurveyModel->int_imm_obs = $fileop[13];
+                        $SurveyModel->save();
+                    }
                 }
-          }
+
+                fclose($handle);
+                @unlink(Yii::getAlias('@webroot') . "/" . $model->csv_file);
+
+                echo "<div class='alert alert-success'>Data uploaded successfully.</div>";
+            }
+        }
     }
-    
+
 
     /**
      * Edits or Creates a user group
@@ -255,19 +255,21 @@ class SurveysController extends Controller
         $value = Yii::$app->request->post('value');
 
         if ($value === null) {
-            throw new HttpException(400,
+            throw new HttpException(
+                400,
                 Yii::t('AdminModule.controllers_GroupController', 'No value found!')
             );
         }
 
         $groupUser = $group->getGroupUser(User::findOne(Yii::$app->request->post('userId')));
         if ($groupUser === null) {
-            throw new HttpException(404,
+            throw new HttpException(
+                404,
                 Yii::t('AdminModule.controllers_GroupController', 'Group user not found!')
             );
         }
 
-        $groupUser->is_group_manager = (bool)$value;
+        $groupUser->is_group_manager = (bool) $value;
 
         return $this->asJson(['success' => $groupUser->save()]);
     }
@@ -309,8 +311,10 @@ class SurveysController extends Controller
             'query' => $query,
             'fillUser' => true,
             'fillUserQuery' => $group->getUsers(),
-            'disabledText' => Yii::t('AdminModule.controllers_GroupController',
-                'User is already a member of this group.'),
+            'disabledText' => Yii::t(
+                'AdminModule.controllers_GroupController',
+                'User is already a member of this group.'
+            ),
         ]);
 
         return $result;
@@ -320,7 +324,7 @@ class SurveysController extends Controller
     {
         $group = Group::findOne($id);
 
-        if(!$group) {
+        if (!$group) {
             throw new HttpException(404, Yii::t('AdminModule.controllers_GroupController', 'Group not found!'));
         }
 
@@ -334,13 +338,12 @@ class SurveysController extends Controller
 
     public function checkGroupAccess($group)
     {
-        if(!$group) {
+        if (!$group) {
             throw new HttpException(404, Yii::t('AdminModule.controllers_GroupController', 'Group not found!'));
         }
 
-        if($group->is_admin_group && !Yii::$app->user->isAdmin()) {
+        if ($group->is_admin_group && !Yii::$app->user->isAdmin()) {
             throw new HttpException(403);
         }
     }
-
 }
