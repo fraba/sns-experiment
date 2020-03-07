@@ -88,7 +88,15 @@ class AdvancedSettingMenu extends \humhub\widgets\BaseMenu
             'isVisible' => Yii::$app->user->isAdmin(),
         ]);
 
+        $this->addItem([
+            'label' => Yii::t('AdminModule.widgets_AdminMenuWidget', 'Redcap'),
+            'url' => Url::toRoute('/admin/setting/redcap'),
+            'icon' => '<i class="fa fa-terminal"></i>',
+            'sortOrder' => 700,
+            'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'admin' && Yii::$app->controller->id == 'setting' && (Yii::$app->controller->action->id == 'redcap' || Yii::$app->controller->action->id == 'redcap-edit')),
+            'isVisible' => Yii::$app->user->isAdmin(),
+        ]);
+
         parent::init();
     }
-
 }

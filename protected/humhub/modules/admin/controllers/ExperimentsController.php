@@ -34,6 +34,11 @@ class ExperimentsController extends Controller
         'cli' => 'Climate change'
     ];
 
+    public static $POLITICAL_OPINIONS = [
+        'left' => 'Left',
+        'right' => 'Right'
+    ];
+
     public function init()
     {
         $this->subLayout = '@admin/views/layouts/user';
@@ -78,7 +83,8 @@ class ExperimentsController extends Controller
 
         return $this->render('view', [
             'experiment' => $model,
-            'TOPICS' => self::$TOPICS
+            'topics' => self::$TOPICS,
+            'political_opinions' => self::$POLITICAL_OPINIONS
         ]);
     }
 
@@ -106,6 +112,14 @@ class ExperimentsController extends Controller
                 try {
                     if ($flag = $modelExperiment->save(false)) {
                         foreach ($modelsExperimentGroup as $modelExperimentGroup) {
+                            if ($modelExperimentGroup->topic_in === NULL) {
+                                $modelExperimentGroup->topic_probability = NULL;
+                            }
+
+                            if ($modelExperimentGroup->pol_op_in === NULL) {
+                                $modelExperimentGroup->pol_op_probability = NULL;
+                            }
+
                             $modelExperimentGroup->experiment_id = $modelExperiment->id;
 
                             $modelExperimentGroup->csv_file = UploadedFile::getInstance($modelExperimentGroup, 'csv_file');
@@ -133,7 +147,6 @@ class ExperimentsController extends Controller
                                 $experiment_user->group_id = $modelExperimentGroup->id;
 
                                 if (!($flag = $experiment_user->save(false))) {
-                                    die();
                                     $transaction->rollBack();
                                     break;
                                 }
@@ -154,6 +167,7 @@ class ExperimentsController extends Controller
 
         return $this->render('create', [
             'topics' => self::$TOPICS,
+            'political_opinions' => self::$POLITICAL_OPINIONS,
             'modelExperiment' => $modelExperiment,
             'modelsExperimentGroup' => (empty($modelsExperimentGroup)) ? [new ExperimentGroup] : $modelsExperimentGroup
         ]);

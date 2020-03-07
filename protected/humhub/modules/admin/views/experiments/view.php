@@ -58,13 +58,13 @@ function format_date($date)
                     <div class="col-md-6">
                         <p>
                             <b><?= Yii::t($MODULE, 'Topic In'); ?></b> <br />
-                            <span><?= $TOPICS[$group->topic_in]; ?></span>
+                            <span><?= $group->topic_in !== NULL && in_array($group->topic_in, $topics) ? $topics[$group->topic_in] : "-"; ?></span>
                         </p>
                     </div>
                     <div class="col-md-6">
                         <p>
                             <b><?= Yii::t($MODULE, 'Topic Probability'); ?></b> <br />
-                            <span><?= $group->topic_probability; ?></span>
+                            <span><?= $group->topic_probability !== NULL ? $group->topic_probability : "-"; ?></span>
                         </p>
                     </div>
                 </div>
@@ -72,13 +72,13 @@ function format_date($date)
                     <div class="col-md-6">
                         <p>
                             <b><?= Yii::t($MODULE, 'Political Opinion In'); ?></b> <br />
-                            <span><?= $TOPICS[$group->pol_op_in]; ?></span>
+                            <span><?= $group->pol_op_in !== NULL && in_array($group->pol_op_in, $political_opinions) ? $political_opinions[$group->pol_op_in] : "-"; ?></span>
                         </p>
                     </div>
                     <div class="col-md-6">
                         <p>
                             <b><?= Yii::t($MODULE, 'Political Opinion Probability'); ?></b> <br />
-                            <span><?= $group->pol_op_probability; ?></span>
+                            <span><?= $group->pol_op_probability !== NULL ? $group->pol_op_probability : "-"; ?></span>
                         </p>
                     </div>
                 </div>

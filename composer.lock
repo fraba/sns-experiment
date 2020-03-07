@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "23d0abfc919d5f5a118d5ab15ddadd75",
+    "content-hash": "a866ff373329dc4b3ac6263f234b6d24",
     "packages": [
         {
             "name": "bower-asset/animate.css",
@@ -131,7 +131,7 @@
             "version": "v3.3.7",
             "source": {
                 "type": "git",
-                "url": "https://github.com/twbs/bootstrap.git",
+                "url": "git@github.com:twbs/bootstrap.git",
                 "reference": "0b9c4a4007c44201dce9a6cc1a38407005c26c86"
             },
             "dist": {
@@ -322,7 +322,7 @@
             "version": "3.2.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jquery/jquery-dist.git",
+                "url": "git@github.com:jquery/jquery-dist.git",
                 "reference": "77d2a51d0520d2ee44173afdf4e40a9201f5964e"
             },
             "dist": {
@@ -526,7 +526,7 @@
             "version": "v1.3.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/bestiejs/punycode.js.git",
+                "url": "git@github.com:bestiejs/punycode.js.git",
                 "reference": "38c8d3131a82567bfef18da09f7f4db68c84f8a3"
             },
             "dist": {
@@ -832,6 +832,48 @@
                 "image processing"
             ],
             "time": "2017-05-16T10:31:22+00:00"
+        },
+        {
+            "name": "iu-redcap/phpcap",
+            "version": "1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/IUREDCap/phpcap.git",
+                "reference": "e557781aa4cfae8c4531d3e2cd81b078714d6c2a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/IUREDCap/phpcap/zipball/e557781aa4cfae8c4531d3e2cd81b078714d6c2a",
+                "reference": "e557781aa4cfae8c4531d3e2cd81b078714d6c2a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-openssl": "*",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "apigen/apigen": "v4.1.2",
+                "erusev/parsedown": "1.6.2",
+                "kzykhys/php-csv-parser": "1.4.1",
+                "phpunit/phpunit": "6.5.8",
+                "squizlabs/php_codesniffer": "3.2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "IU\\PHPCap\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "PHP library for accessing the REDCap API",
+            "keywords": [
+                "redcap"
+            ],
+            "time": "2019-10-01T13:28:17+00:00"
         },
         {
             "name": "jbroadway/urlify",

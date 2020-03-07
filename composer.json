@@ -38,6 +38,7 @@
         "bower-asset/select2-bootstrap-theme": "0.1.0-beta.4",
         "cebe/markdown": "1.0.2",
         "firebase/php-jwt": "^5.0",
+        "iu-redcap/phpcap": "^1.0",
         "jbroadway/urlify": "^1.0",
         "kartik-v/yii2-mpdf": "dev-master",
         "kartik-v/yii2-widgets": "*",

@@ -258,24 +258,41 @@ class SettingController extends Controller
     }
 
     /**
+     * Redcap Settings
+     */
+    public function actionRedcap()
+    {
+        $form = new \humhub\modules\admin\models\forms\RedcapSettingsForm;
+
+        if ($form->load(Yii::$app->request->post()) && $form->validate() && $form->save()) {
+            $this->view->saved();
+            return $this->redirect(['/admin/setting/redcap']);
+        }
+
+        return $this->render('redcap', ['model' => $form]);
+    }
+
+    /**
      * List of OEmbed Providers
      */
     public function actionOembed()
     {
         $providers = UrlOembed::getProviders();
-        return $this->render('oembed',
-        [
-            'providers' => $providers
-        ]);
+        return $this->render(
+            'oembed',
+            [
+                'providers' => $providers
+            ]
+        );
     }
 
     public function actionLogs()
     {
         $logsCount = Log::find()->count();
         $dating = Log::find()
-                ->orderBy('log_time', 'asc')
-                ->limit(1)
-                ->one();
+            ->orderBy('log_time', 'asc')
+            ->limit(1)
+            ->one();
 
         // I wish..
         if ($dating) {
@@ -327,16 +344,19 @@ class SettingController extends Controller
             UrlOembed::setProviders($providers);
 
             return $this->redirect(
-            [
-                '/admin/setting/oembed'
-            ]);
+                [
+                    '/admin/setting/oembed'
+                ]
+            );
         }
 
-        return $this->render('oembed_edit',
-        [
-            'model' => $form,
-            'prefix' => $prefix
-        ]);
+        return $this->render(
+            'oembed_edit',
+            [
+                'model' => $form,
+                'prefix' => $prefix
+            ]
+        );
     }
 
     /**
@@ -360,9 +380,9 @@ class SettingController extends Controller
     public function actionAdvanced()
     {
         return $this->redirect(
-        [
-            'caching'
-        ]);
+            [
+                'caching'
+            ]
+        );
     }
-
 }

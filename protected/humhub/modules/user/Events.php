@@ -9,8 +9,11 @@ use humhub\modules\user\models\Profile;
 use humhub\modules\user\models\GroupUser;
 use humhub\modules\user\models\Mentioning;
 use humhub\modules\user\models\Follow;
+use humhub\modules\user\models\Surveys;
 use Yii;
 use yii\base\BaseObject;
+use IU\PHPCap\RedCapProject;
+
 
 /**
  * Events provides callbacks for all defined module events.
@@ -154,4 +157,62 @@ class Events extends BaseObject
         Yii::$app->queue->push(new jobs\DeleteExpiredSessions());
     }
 
+    /**
+     * Tasks on user registration
+     * 
+     * @param \yii\base\Event $event
+     */
+    public static function onUserRegistration($event)
+    {
+        $user_id = $event->sender->models['User']->id;
+        $user_email = $event->sender->models['User']->email;
+
+        $api_url = Yii::$app->settings->get("redcap.apiurl");
+        $api_token = Yii::$app->settings->get("redcap.apitoken");
+        $survey_id = Yii::$app->settings->get("redcap.surveyid");
+
+        if ($api_url === NULL || $api_token === NULL || $survey_id === NULL) {
+            return;
+        }
+
+        $project = new RedCapProject($api_url, $api_token);
+
+        $participants = $project->exportSurveyParticipants($survey_id);
+
+        $participant_index = array_search($user_email, array_column($participants, "email"));
+
+        if (!$participant_index) {
+            return;
+        }
+
+        $survey_records_for_participant = $project->exportRecordsAp([
+            "format" => "php",
+            "forms" => [$survey_id],
+            "recordIds" => [$participants[$participant_index]["record"]]
+        ]);
+
+        if (!$survey_records_for_participant || count($survey_records_for_participant) === 0) {
+            return;
+        }
+
+        $serialized_survey_data = serialize($survey_records_for_participant[0]);
+
+        // Load records into DB
+        $survey_records = Surveys::findOne(['user_id' => $user_id]);
+
+        if ($survey_records === NULL) {
+            $survey_records = new Surveys;
+            $survey_records->isNewRecord = true;
+        }
+
+        $survey_records->user_id = $user_id;
+        $survey_records->survey_data = $serialized_survey_data;
+
+        if ($survey_records !== NULL) {
+            $survey_records->update();
+            return;
+        }
+
+        $survey_records->save();
+    }
 }

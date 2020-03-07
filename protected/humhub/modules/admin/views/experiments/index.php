@@ -4,6 +4,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use humhub\widgets\GridView;
 use yii\widgets\Pjax;
+
 ?>
 <div class="panel-body">
     <h4><?= Yii::t('AdminModule.views_experiments_index', 'Manage experiments'); ?></h4>

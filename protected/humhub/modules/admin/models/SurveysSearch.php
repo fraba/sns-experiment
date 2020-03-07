@@ -1,4 +1,5 @@
 <?php
+
 namespace humhub\modules\admin\models;
 
 use yii\base\Model;
@@ -16,7 +17,7 @@ class SurveysSearch extends Surveys
     public function rules()
     {
         return [
-            [['user_id', 'user_email'], 'safe'],
+            [['user_id', 'survey_data'], 'safe'],
         ];
     }
 
@@ -26,7 +27,7 @@ class SurveysSearch extends Surveys
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
-      //  return Model::scenarios();
+        //  return Model::scenarios();
     }
 
     /**
@@ -47,22 +48,14 @@ class SurveysSearch extends Surveys
 
         $dataProvider->setSort([
             'attributes' => [
-                //'user_id',
-                'user_email',
+                'user_id',
             ]
         ]);
 
         $this->load($params);
 
-       // if (!$this->validate()) {
-       //     $query->where('0=1');
-        //    return $dataProvider;
-       // }
-
-        //$query->andFilterWhere(['like', 'user_id', $this->user_id]);
-        $query->andFilterWhere(['like', 'user_email', $this->user_email]);
+        $query->andFilterWhere(['like', 'user_id', $this->user_id]);
 
         return $dataProvider;
     }
-
 }

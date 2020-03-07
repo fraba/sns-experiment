@@ -122,7 +122,7 @@ $this->registerJs($js);
                     <h4>Filter</h4>
                     <?= $form->field($modelExperimentGroup, "[{$index}]topic_in")->dropDownList(array_merge([NULL => 'Select Topic'], $topics)); ?>
                     <?= $form->field($modelExperimentGroup, "[{$index}]topic_probability")->textInput(['type' => 'number', 'min' => 0, 'max' => 100]); ?>
-                    <?= $form->field($modelExperimentGroup, "[{$index}]pol_op_in")->dropDownList(array_merge([NULL => 'Select Political Opinion'], $topics)); ?>
+                    <?= $form->field($modelExperimentGroup, "[{$index}]pol_op_in")->dropDownList(array_merge([NULL => 'Select Political Opinion'], $political_opinions)); ?>
                     <?= $form->field($modelExperimentGroup, "[{$index}]pol_op_probability")->textInput(['type' => 'number', 'min' => 0, 'max' => 100]); ?>
                 </div>
             </div>

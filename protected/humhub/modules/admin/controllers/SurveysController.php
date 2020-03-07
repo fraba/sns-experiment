@@ -67,6 +67,19 @@ class SurveysController extends Controller
         ]);
     }
 
+    /**
+     * Displays a single Survey model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+
+        return $this->render('view', [
+            'survey' => $model,
+        ]);
+    }
 
     public function actionCsvimport()
     {
@@ -345,5 +358,18 @@ class SurveysController extends Controller
         if ($group->is_admin_group && !Yii::$app->user->isAdmin()) {
             throw new HttpException(403);
         }
+    }
+
+    public function findModel($id)
+    {
+        $survey = Surveys::findOne($id);
+
+        if (!$survey) {
+            throw new HttpException(404, "Survey data not found");
+        }
+
+        $survey->user = $survey->getUser();
+
+        return $survey;
     }
 }

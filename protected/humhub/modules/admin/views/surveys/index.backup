@@ -1,0 +1,20 @@
+<div class="pull-right">
+        <?php
+        $model = new CsvForm;
+        $form = ActiveForm::begin([
+            //'action' => ['surveys/csvimport'],
+            'options' => ['enctype' => 'multipart/form-data', 'id' => 'form', 'class' => 'form-inline']
+
+        ]); ?>
+        <?= $form->field($model, 'csv_file')->fileInput(); ?>
+        <div class="form-group">
+            <?= Html::submitButton('Upload CSV', ['class' => 'btn btn-sm btn-success subm']) ?>
+            <?php echo $form->errorSummary($model); ?>
+        </div>
+        <?php ActiveForm::end(); ?>
+
+        <div class="help-block">
+            <?php //echo Yii::t('AdminModule.views_surveys_index', 'Users can be assigned to different groups (e.g. teams, departments etc.) with specific standard spaces, group managers and permissions.'); 
+            ?>
+        </div>
+    </div>
