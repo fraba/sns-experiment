@@ -198,17 +198,14 @@ class Events extends BaseObject
         $serialized_survey_data = serialize($survey_records_for_participant[0]);
 
         // Load records into DB
-        $survey_records = Surveys::findOne(['user_id' => $user_id]);
+        $survey_records_in_db = Surveys::findOne(['user_id' => $user_id]);
 
-        if ($survey_records === NULL) {
-            $survey_records = new Surveys;
-            $survey_records->isNewRecord = true;
-        }
-
+        $survey_records = $survey_records_in_db === NULL ? new Surveys : $survey_records_in_db;
+        $survey_records->isNewRecord = $survey_records_in_db === NULL;
         $survey_records->user_id = $user_id;
         $survey_records->survey_data = $serialized_survey_data;
 
-        if ($survey_records !== NULL) {
+        if ($survey_records_in_db !== NULL) {
             $survey_records->update();
             return;
         }
