@@ -165,7 +165,7 @@ class Events extends BaseObject
     public static function onUserRegistration($event)
     {
         $user_id = $event->sender->models['User']->id;
-        $user_email = $event->sender->models['User']->email;
+        $user_email = strtolower($event->sender->models['User']->email);
 
         $api_url = Yii::$app->settings->get("redcap.apiurl");
         $api_token = Yii::$app->settings->get("redcap.apitoken");
