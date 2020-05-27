@@ -480,9 +480,9 @@ class SurveysController extends Controller
     {
         $survey = Surveys::findOne($id);
 
-        if (!$survey) {
+       /*  if (!$survey) {
             throw new HttpException(404, "Survey data not found");
-        }
+        } */
 
         $survey->user = $survey->getUser();
 
