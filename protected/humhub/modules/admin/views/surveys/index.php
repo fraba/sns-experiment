@@ -65,7 +65,7 @@ Modal::end();
                     'label' => Yii::t('AdminModule.views_suveys_index', 'User'),
                     'value' => function ($data) {
                         $user = $data->getUser();
-                        return $user->email;
+                        return $user !== NULL ? $user->email : "(survey data found - user not found - probably deleted?)";
                     }
                 ],
                 [
