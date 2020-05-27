@@ -37,9 +37,9 @@ class SurveysSearch extends Surveys
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function searchAll($params)
     {
-        $query = Surveys::find();
+        $query = Surveys::find()->select("user_id")->distinct();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -55,6 +55,33 @@ class SurveysSearch extends Surveys
         $this->load($params);
 
         $query->andFilterWhere(['like', 'user_id', $this->user_id]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        $query = Surveys::find()->where(['user_id' => $params["user_id"]]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => ['pageSize' => 50],
+        ]);
+
+        $dataProvider->setSort([
+            'attributes' => [
+                'survey_id',
+            ]
+        ]);
+
+        $this->load($params);
 
         return $dataProvider;
     }

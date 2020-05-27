@@ -15,7 +15,9 @@ use humhub\modules\user\models\Group;
 use humhub\modules\user\models\GroupUser;
 use humhub\modules\user\models\User;
 use humhub\modules\user\models\UserPicker;
+use humhub\modules\user\models\Profile;
 use humhub\modules\admin\models\CsvForm;
+use humhub\modules\admin\controllers\RedcapController;
 use yii\web\UploadedFile;
 use Yii;
 use yii\db\Exception;
@@ -59,11 +61,27 @@ class SurveysController extends Controller
     public function actionIndex()
     {
         $searchModel = new SurveysSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchAll(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+        ]);
+    }
+
+    /**
+     * Displays a single Survey model.
+     * @param integer $user_id
+     * @return mixed
+     */
+    public function actionViewall($user_id)
+    {
+        $searchModel = new SurveysSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('viewall', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel
         ]);
     }
 
@@ -78,6 +96,105 @@ class SurveysController extends Controller
 
         return $this->render('view', [
             'survey' => $model,
+        ]);
+    }
+
+    /**
+     * Automatically ingest surveys responses for one user
+     * @param integer $user_id
+     * @return mixed
+     */
+    public function actionIngest($user_id)
+    {
+        $post = Yii::$app->request->post();
+        $model = $post["DynamicModel"];
+
+        $redcap = new RedcapController();
+        $users = (int) $user_id === -1 ? User::find()->all() : [User::findOne($user_id)];
+
+        if ($users === NULL) {
+            throw "Could not find user(s)";
+        }
+
+        $surveys_to_ingest = array_keys(array_filter($model, function ($v) {
+            return (int) $v === 1;
+        }));
+
+        if (count($surveys_to_ingest) === 0) {
+            throw new Exception("No surveys selected");
+        }
+
+        $ingested = [];
+        $not_ingested = [];
+
+        foreach ($users as $user) {
+            $surveys = $redcap->getSurveysResponsesForUser($surveys_to_ingest, $user);
+            $saved_or_updated = false;
+
+            foreach ($surveys['ingested'] as $survey_id => $survey_data) {
+                // If data for a certain survey exists, update it 
+                $survey_in_db = Surveys::findOne(['user_id' => $user->id, 'survey_id' => $survey_id]);
+
+                $survey = $survey_in_db === NULL ? new Surveys : $survey_in_db;
+                $survey->isNewRecord = $survey_in_db === NULL;
+                $survey->user_id = $user->id;
+                $survey->survey_data = $survey_data;
+                $survey->survey_id = $survey_id;
+
+                if ($survey_in_db === NULL) {
+                    $saved_or_updated = true;
+                    $survey->save();
+                    continue;
+                }
+
+                $saved_or_updated = true;
+                $survey->update();
+            }
+
+            if ($saved_or_updated) {
+                array_push($ingested, $user->email);
+            } else {
+                array_push($not_ingested, $user->email);
+            }
+        }
+
+        $ingested = implode(", ", $ingested);
+        $not_ingested = implode(", ", $not_ingested);
+
+        $message = <<<EOT
+            Survey(s) ingested for the following users:
+            <br/>
+                $ingested
+            <br/>
+            <br/>
+            Survey(s) NOT ingested for the following users:
+            <br />
+            <p>
+                <b><i>Selected survey(s) might not be enabled as a survey or the user did not complete the survey</b></i>
+            </p>
+            <br/>
+                $not_ingested
+        EOT;
+
+        \Yii::$app->session->setFlash('survey_ingest_info', $message);
+
+        return $this->redirect(["/admin/surveys"]);
+    }
+
+    public function actionSelectsurveys($user_id)
+    {
+        $redcap = new RedcapController();
+        $surveys = $redcap->getSurveys();
+        $surveys_model = new \yii\base\DynamicModel(array_keys($surveys));
+        $user = User::findOne(['id' => $user_id]);
+        $user_profile = Profile::findOne(['user_id' => $user_id]);
+
+        return $this->renderAjax("surveys_modal", [
+            'user_id' => $user_id,
+            'user' => $user,
+            'user_profile' => $user_profile,
+            'surveys' => $surveys,
+            'model' => $surveys_model
         ]);
     }
 

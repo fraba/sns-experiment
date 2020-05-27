@@ -43,4 +43,24 @@ class ExperimentUserGroup extends ActiveRecord
         $user->getProfile();
         return $user;
     }
+
+    /**
+     * Assigns a user to a group or unassigns it if it's already part of the group
+     * @param integer $group_id 
+     * @param integer $user_id
+     */
+    public static function assignToGroup($group_id, $user_id)
+    {
+        $user_group = ExperimentUserGroup::findOne(['group_id' => $group_id, 'user_id' => $user_id]);
+
+        if ($user_group === NULL) {
+            $exp_user_group = new ExperimentUserGroup;
+            $exp_user_group->group_id = $group_id;
+            $exp_user_group->user_id = $user_id;
+            $exp_user_group->save();
+            return;
+        }
+
+        $user_group->delete();
+    }
 }

@@ -34,7 +34,7 @@ class Surveys extends ActiveRecord
     {
         return [
             [['user_id'], 'integer'],
-            [['survey_data'], 'string']
+            [['survey_id', 'survey_data'], 'string']
         ];
     }
 
@@ -45,6 +45,7 @@ class Surveys extends ActiveRecord
     {
         return [
             'user_id' => Yii::t('UserModule.models_User', 'User Id'),
+            'survey_id' => Yii::t('UserModule.models_User', 'Survey Id'),
             'survey_data' => Yii::t('UserModule.models_User', 'Survey Data'),
             // 'pol_op' => Yii::t('UserModule.models_User', 'pol_op'),
             // 'pol_op_abo' => Yii::t('UserModule.models_User', 'pol_op_abo'),

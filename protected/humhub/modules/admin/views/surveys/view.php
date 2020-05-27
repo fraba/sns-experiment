@@ -19,7 +19,7 @@ $email = $survey->user->email;
     <div class="clearfix"></div>
     <hr>
     <div>
-        <h3>Survey Responses</h3>
+        <h3>Survey Responses (<?= $survey->survey_id ?>)</h3>
         <p>
             <?= $email ?>
         </p>

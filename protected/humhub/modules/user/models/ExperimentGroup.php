@@ -42,6 +42,8 @@ class ExperimentGroup extends ActiveRecord
 
     public function getUsers()
     {
-        return $this->hasMany(ExperimentUserGroup::class, ['group_id' => 'id'])->orderBy("user_id")->all();
+        $users = $this->hasMany(ExperimentUserGroup::class, ['group_id' => 'id'])->orderBy("user_id")->all();
+        $this->users = $users;
+        return $users;
     }
 }

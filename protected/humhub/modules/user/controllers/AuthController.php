@@ -20,6 +20,7 @@ use humhub\modules\user\models\Session;
 use Yii;
 use yii\authclient\BaseClient;
 use yii\web\Cookie;
+use humhub\modules\user\events\UserEvent;
 
 /**
  * AuthController handles login and logout
@@ -28,6 +29,12 @@ use yii\web\Cookie;
  */
 class AuthController extends Controller
 {
+
+    /**
+     * @event Triggered after an successful login. Note: In contrast to User::EVENT_AFTER_LOGIN, this event is triggered
+     * after the response is generated.
+     */
+    const EVENT_AFTER_LOGIN = 'afterLogin';
 
     /**
      * @inheritdoc
@@ -167,6 +174,7 @@ class AuthController extends Controller
     protected function login($user, $authClient)
     {
         $redirectUrl = ['/user/auth/login'];
+        $success = false;
         if ($user->status == User::STATUS_ENABLED) {
             $duration = 0;
             if ($authClient instanceof BaseFormAuth) {
@@ -177,7 +185,7 @@ class AuthController extends Controller
 
             AuthClientHelpers::updateUser($authClient, $user);
 
-            if (Yii::$app->user->login($user, $duration)) {
+            if ($success = Yii::$app->user->login($user, $duration)) {
                 Yii::$app->user->setCurrentAuthClient($authClient);
                 $redirectUrl = Yii::$app->user->returnUrl;
             }
@@ -189,11 +197,13 @@ class AuthController extends Controller
             Yii::$app->session->setFlash('error', Yii::t('UserModule.base', 'Unknown user status!'));
         }
 
-        if (Yii::$app->request->getIsAjax()) {
-            return $this->htmlRedirect($redirectUrl);
+        $result = Yii::$app->request->getIsAjax() ? $this->htmlRedirect($redirectUrl) : $this->redirect($redirectUrl);
+
+        if ($success) {
+            $this->trigger(self::EVENT_AFTER_LOGIN, new \yii\web\UserEvent(['identity' => $user]));
         }
 
-        return $this->redirect($redirectUrl);
+        return $result;
     }
 
     /**
@@ -242,5 +252,4 @@ class AuthController extends Controller
 
         return $output;
     }
-
 }

@@ -16,6 +16,11 @@ use humhub\modules\user\models\User;
 use humhub\modules\space\models\Space;
 use humhub\modules\space\models\Membership;
 use humhub\modules\content\models\Content;
+use humhub\modules\content\models\ContentTag;
+use humhub\modules\like\models\Like;
+use humhub\modules\topic\models\Topic;
+use humhub\modules\user\models\Experiment;
+use yii\db\Expression;
 
 /**
  * DashboardStreamAction
@@ -98,16 +103,15 @@ class DashboardStreamAction extends ActivityStreamAction
             $usersFriends = (new Query())
                 ->select(["ufrc.id"])
                 ->from('user ufr')
-                ->leftJoin('user_friendship recv', 'ufr.id=recv.friend_user_id AND recv.user_id=' . (int)$this->user->id)
-                ->leftJoin('user_friendship snd', 'ufr.id=snd.user_id AND snd.friend_user_id=' . (int)$this->user->id)
+                ->leftJoin('user_friendship recv', 'ufr.id=recv.friend_user_id AND recv.user_id=' . (int) $this->user->id)
+                ->leftJoin('user_friendship snd', 'ufr.id=snd.user_id AND snd.friend_user_id=' . (int) $this->user->id)
                 ->leftJoin('contentcontainer ufrc', 'ufr.id=ufrc.pk AND ufrc.class=:userClass')
                 ->where('recv.id IS NOT NULL AND snd.id IS NOT NULL AND ufrc.id IS NOT NULL');
             $union .= " UNION " . Yii::$app->db->getQueryBuilder()->build($usersFriends)[0];
         }
 
         // Automatic include user profile posts without required following
-        if ($dashboardModule->autoIncludeProfilePosts == Module::STREAM_AUTO_INCLUDE_PROFILE_POSTS_ALWAYS || (
-                $dashboardModule->autoIncludeProfilePosts == Module::STREAM_AUTO_INCLUDE_PROFILE_POSTS_ADMIN_ONLY && Yii::$app->user->isAdmin())) {
+        if ($dashboardModule->autoIncludeProfilePosts == Module::STREAM_AUTO_INCLUDE_PROFILE_POSTS_ALWAYS || ($dashboardModule->autoIncludeProfilePosts == Module::STREAM_AUTO_INCLUDE_PROFILE_POSTS_ADMIN_ONLY && Yii::$app->user->isAdmin())) {
             $allUsers = (new Query())->select(["allusers.id"])->from('user allusers');
             $union .= " UNION " . Yii::$app->db->getQueryBuilder()->build($allUsers)[0];
         }
@@ -126,11 +130,15 @@ class DashboardStreamAction extends ActivityStreamAction
          * Begin visibility checks regarding the content container
          */
         $this->activeQuery->leftJoin(
-            'space_membership', 'contentcontainer.pk=space_membership.space_id AND space_membership.user_id=:userId AND space_membership.status=:status', ['userId' => $this->user->id, ':status' => Membership::STATUS_MEMBER]
+            'space_membership',
+            'contentcontainer.pk=space_membership.space_id AND space_membership.user_id=:userId AND space_membership.status=:status',
+            ['userId' => $this->user->id, ':status' => Membership::STATUS_MEMBER]
         );
         if ($friendshipEnabled) {
             $this->activeQuery->leftJoin(
-                'user_friendship', 'contentcontainer.pk=user_friendship.user_id AND user_friendship.friend_user_id=:userId', ['userId' => $this->user->id]
+                'user_friendship',
+                'contentcontainer.pk=user_friendship.user_id AND user_friendship.friend_user_id=:userId',
+                ['userId' => $this->user->id]
             );
         }
 
@@ -155,4 +163,117 @@ class DashboardStreamAction extends ActivityStreamAction
         ]);
     }
 
+    public function filterStream($contents)
+    {
+        $pol_ops = [
+            1 => "left",
+            2 => "middle",
+            3 => "right"
+        ];
+
+        $experiment = Experiment::getOngoingForUserId($this->user->id);
+        $group = null;
+        foreach ($experiment->groups as $g) {
+            foreach ($g->users as $user) {
+                if ($user->user_id === $this->user->id) {
+                    $group = $g;
+                    break;
+                }
+            }
+        }
+
+        if ($group === NULL) {
+            return;
+        }
+
+        $return = [];
+        foreach ($contents as $content) {
+            if ($group->topic_in !== NULL) {
+                $tag_content_relations = ContentTag::getTagContentRelations($content);
+                $tags_models = [];
+                foreach ($tag_content_relations as $tcr) {
+                    array_push($tags_models, ContentTag::findOne(["id" => $tcr->tag_id]));
+                }
+
+                $tags = array_map(function ($tag) {
+                    return $tag->name;
+                }, $tags_models);
+
+
+                if (in_array($group->topic_in, $tags) === false) {
+                    continue;
+                }
+            }
+
+            if ($group->pol_op_in !== NULL) {
+                $content_pol_op_set = $pol_ops[$content->pol_op];
+                $author_id = $content->created_by;
+                $author = User::findOne(["id" => $author_id]);
+                $author_pol_op = $author->pol_op;
+                // @TODO: pol_op_topic for author is missing
+                $likes = Like::findAll(["object_id" => $content->id]);
+                $likers_pol_op = [];
+                // @TODO:
+                $likers_pol_op_topic = [];
+                if (count($likes) > 0) {
+                    foreach ($likes as $like) {
+                        $_user = User::findOne(["id" => $like->created_by]);
+                        array_push($likers_pol_op, $_user->pol_op);
+                        // @TODO: add pol_op_topic
+                        array_push($likers_pol_op_topic, 1);
+                    }
+                }
+
+                $content_pol_op_inferred = $this->inferContentPolOp($content_pol_op_set, $author_pol_op, 1, $likers_pol_op, $likers_pol_op_topic);
+                if ($group->pol_op_in === "left" && $content_pol_op_inferred > 0) {
+                    continue;
+                }
+            }
+
+            array_push($return, $content);
+        }
+
+        // Sort decreasing by created_at
+        uasort($return, function ($a, $b) {
+            if ($a->created_at === $b->created_at) return 0;
+            return ($a->created_at < $b->created_at) ? 1 : -1;
+        });
+
+        return $return;
+    }
+
+    private function inferContentPolOp($content_pol_op_set, $author_pol_op, $author_pol_op_topic, $likers_pol_op, $likers_pol_op_topic)
+    {
+        if ($content_pol_op_set !== NULL) {
+            if ($content_pol_op_set === "left") {
+                return -10;
+            } else if ($content_pol_op_set === "right") {
+                return 10;
+            }
+        }
+        $bundled_author_pol_op = ($author_pol_op * 1 + $author_pol_op_topic * 3) * 14;
+        if (count($likers_pol_op) > 0) {
+            $bundled_likers_pol_op = ($this->mean($likers_pol_op) * 1 + $this->mean($likers_pol_op_topic) * 3) * 14;
+            return ($bundled_author_pol_op + $bundled_likers_pol_op) * 12;
+        }
+        return $bundled_author_pol_op;
+    }
+
+    private function mean($arr = [])
+    {
+        return (int) (array_sum($arr) / count($arr));
+    }
+
+    protected function beforeRun()
+    {
+        $contents = $this->streamQuery->all();
+        $filtered = $this->filterStream($contents);
+
+        $filtered_ids = array_map(function ($_c) {
+            return $_c->id;
+        }, $filtered);
+
+        $this->activeQuery->andWhere(["content.id" => $filtered_ids]);
+        return true;
+    }
 }

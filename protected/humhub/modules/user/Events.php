@@ -2,6 +2,7 @@
 
 namespace humhub\modules\user;
 
+use humhub\modules\admin\controllers\RedcapController;
 use humhub\modules\content\models\ContentContainer;
 use humhub\modules\user\models\User;
 use humhub\modules\user\models\Password;
@@ -198,11 +199,12 @@ class Events extends BaseObject
         $serialized_survey_data = serialize($survey_records_for_participant[0]);
 
         // Load records into DB
-        $survey_records_in_db = Surveys::findOne(['user_id' => $user_id]);
+        $survey_records_in_db = Surveys::findOne(['user_id' => $user_id, 'survey_id' => $survey_id]);
 
         $survey_records = $survey_records_in_db === NULL ? new Surveys : $survey_records_in_db;
         $survey_records->isNewRecord = $survey_records_in_db === NULL;
         $survey_records->user_id = $user_id;
+        $survey_records->survey_id = $survey_id;
         $survey_records->survey_data = $serialized_survey_data;
 
         if ($survey_records_in_db !== NULL) {
@@ -211,5 +213,52 @@ class Events extends BaseObject
         }
 
         $survey_records->save();
+    }
+
+    /**
+     * Tasks on user registration
+     * 
+     * @param \yii\base\Event $event
+     */
+    public static function onUserLogin($event)
+    {
+        $redcap = new RedcapController();
+        $user_id = $event->sender->models['User']->id;
+
+        // get current answered surveys
+        $user = User::findOne($user_id);
+        $surveys_answered = Surveys::findAll(['user_id' => $user_id]);
+
+        $redcap_surveys = $redcap->getSurveys();
+
+        $surveys_to_ingest = [];
+
+        foreach ($redcap_surveys as $key => $value) {
+            $found = false;
+            foreach ($surveys_answered as $sv) {
+                if ($sv->survey_id === $key) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                array_push($surveys_to_ingest, $key);
+            }
+        }
+
+        $responses = $redcap->getSurveysResponsesForUser($surveys_to_ingest, $user);
+
+        // save to db responses
+        if (count($responses['ingested']) > 0) {
+            foreach ($responses['ingested'] as $survey_id => $survey_response) {
+                $survey = new Surveys;
+                $survey->isNewRecord = true;
+                $survey->user_id = $user_id;
+                $survey->survey_id = $survey_id;
+                $survey->survey_data = $survey_response;
+                $survey->save();
+            }
+        }
     }
 }

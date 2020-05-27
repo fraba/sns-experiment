@@ -7,6 +7,8 @@ use humhub\modules\content\components\ContentAddonActiveRecord;
 use humhub\modules\content\components\ContentActiveRecord;
 use humhub\commands\CronController;
 use humhub\modules\user\models\forms\Registration;
+use humhub\modules\user\controllers\AuthController;
+use yii\web\User;
 
 return [
     'id' => 'user',
@@ -21,6 +23,7 @@ return [
         ['class' => ContentAddonActiveRecord::class, 'event' => ContentAddonActiveRecord::EVENT_BEFORE_DELETE, 'callback' => [Events::class, 'onContentDelete']],
         ['class' => IntegrityController::class, 'event' => IntegrityController::EVENT_ON_RUN, 'callback' => [Events::class, 'onIntegrityCheck']],
         ['class' => CronController::class, 'event' => CronController::EVENT_ON_HOURLY_RUN, 'callback' => [Events::class, 'onHourlyCron']],
-        ['class' => Registration::class, 'event' => Registration::EVENT_AFTER_REGISTRATION, 'callback' => [Events::class, 'onUserRegistration']]
+        ['class' => Registration::class, 'event' => Registration::EVENT_AFTER_REGISTRATION, 'callback' => [Events::class, 'onUserRegistration']],
+        ['class' => AuthController::class, 'event' => AuthController::EVENT_AFTER_LOGIN, 'callback' => [Events::class, 'onUserLogin']],
     ]
 ];
