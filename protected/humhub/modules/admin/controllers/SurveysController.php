@@ -490,4 +490,3 @@ class SurveysController extends Controller
         return $survey;
     }
 }
-?>
