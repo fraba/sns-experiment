@@ -70,11 +70,10 @@ class SurveysController extends Controller
     }
 
     /**
-     * Displays a single Survey model.
-     * @param integer $user_id
+     * Displays multiple surveys.
      * @return mixed
      */
-    public function actionViewall($user_id)
+    public function actionViewall()
     {
         $searchModel = new SurveysSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
