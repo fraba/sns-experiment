@@ -93,3 +93,14 @@ SUCCESS!
 
 RewriteCond %{HTTP_HOST} ^partake.social
 RewriteRule ^(.*) http://203.101.226.107/sns-experiment/$1 [P]
+
+
+#### Upgrade Instructions from Git clone on server ####
+
+cd <the site folder>
+git pull
+sudo chown -R www-data:www-data *
+sudo -u www-data composer install
+cd protected
+sudo -u www-data yii migrate
+sudo apachectl restart
