@@ -119,8 +119,12 @@ class WallCreateContentForm extends Widget
         Yii::$app->response->format = 'json';
         
         $visibility = Yii::$app->request->post('visibility', Content::VISIBILITY_PRIVATE);
-        $polop = Yii::$app->request->post('polop');
-             
+        //$polop = Yii::$app->request->post('polop');
+    
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $polop = $user->pol_op;
+        
+        
         if ($visibility == Content::VISIBILITY_PUBLIC && !$contentContainer->can(CreatePublicContent::class)) {
             $visibility = Content::VISIBILITY_PRIVATE;
         }
